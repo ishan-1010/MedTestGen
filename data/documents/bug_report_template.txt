@@ -1,0 +1,80 @@
+Bug Report Template - HealthFirst Platform
+
+Bug ID: BUG-2024-001
+Title: Password reset link expires immediately after generation
+Severity: High
+Priority: P1
+Status: Open
+Reported By: QA Team
+Date Reported: 2024-01-15
+Module: User Management - Password Reset
+
+Environment:
+- Browser: Chrome 120.0.6099.129
+- OS: Windows 11
+- Server: Staging Environment
+- API Version: v1.2.3
+- Database: PostgreSQL 14
+
+Description:
+When a user requests a password reset, the system generates a reset link and sends it via email. However, when the user clicks the link (even immediately after receiving the email), the system displays "Invalid or expired token" error message.
+
+Steps to Reproduce:
+1. Navigate to login page
+2. Click "Forgot Password" link
+3. Enter registered email address: test.user@example.com
+4. Click "Send Reset Link"
+5. Check email inbox for reset link
+6. Click the reset link within 1 minute of receiving
+7. Observe error message: "Invalid or expired token"
+
+Expected Behavior:
+- Reset link should remain valid for 24 hours as per requirements
+- User should be able to access password reset form using the link
+- Token should only expire after 24 hours or after successful password reset
+
+Actual Behavior:
+- Reset link appears to be expired immediately
+- User cannot access password reset form
+- Error message displayed regardless of how quickly link is clicked
+
+Root Cause Analysis (if known):
+Preliminary investigation suggests the token expiration timestamp might be set incorrectly in the database. The expiration time appears to be set to creation time instead of creation time + 24 hours.
+
+Impact:
+- Users cannot reset their passwords
+- Increased support tickets
+- User frustration and potential account abandonment
+- HIPAA compliance issue if users share passwords due to inability to reset
+
+Workaround:
+Support team can manually reset passwords through admin panel, but this is not scalable and poses security concerns.
+
+Attachments:
+- Screenshot of error message
+- Network logs showing API response
+- Database query results for token table
+- Email with reset link
+
+Related Test Cases:
+- TC-PWD-001: Password reset with valid email
+- TC-PWD-002: Password reset token expiration
+- TC-PWD-003: Password reset link validation
+
+Regression Testing Required:
+- All password reset scenarios
+- Token generation for other features (email verification, API tokens)
+- Email service integration
+- User notification system
+
+Fix Verification Steps:
+1. Apply the fix to development environment
+2. Test password reset flow end-to-end
+3. Verify token expiration time is set to 24 hours
+4. Test edge cases (multiple reset requests, expired tokens)
+5. Confirm no regression in related features
+6. Load test with multiple concurrent reset requests
+
+Notes:
+This bug is blocking the user acceptance testing phase. Similar issue might exist in email verification tokens - needs investigation.
+

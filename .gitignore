@@ -1,1 +1,95 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
 my_pat.txt
+
+# Streamlit
+.streamlit/secrets.toml
+*.log
+
+# Data - Keep structure but not content
+data/test_cases/*.json
+!data/test_cases/.gitkeep
+data/uploaded_documents/*
+!data/uploaded_documents/.gitkeep
+data/faiss_indices/*.index
+data/faiss_indices/*.pkl
+!data/faiss_indices/.gitkeep
+
+# Backups
+data/backup_old_structure*/
+data/saved_test_cases/
+data/generated_test_cases/
+data/imported_test_suites/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+.cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# Documentation build
+docs/_build/
+docs/_static/
+docs/_templates/
+
+# OS Files
+Thumbs.db
+Desktop.ini
+
+# Migration scripts (if temporary)
+migrate*.py
+
+# Sample files (optional - uncomment if you don't want to track)
+# sample_*.csv
+# sample_*.json
+# sample_*.txt
+# sample_*.md

@@ -1,0 +1,45 @@
+[
+  {
+    "testCaseId": "MED_TC_001",
+    "testTitle": "Patient Admission Process",
+    "objective": "Validate the complete patient admission workflow including insurance verification and room assignment",
+    "preConditions": "User has admin privileges, Hospital has available beds",
+    "testSteps": [
+      "Login as admin user",
+      "Navigate to Admissions module",
+      "Click New Admission",
+      "Enter patient demographics",
+      "Verify insurance eligibility",
+      "Select available room",
+      "Complete admission form",
+      "Submit admission request"
+    ],
+    "expectedOutcome": "Patient successfully admitted with room assigned and insurance verified",
+    "testPriority": "Critical",
+    "testCategory": "Healthcare Workflow",
+    "complianceStandards": ["HIPAA", "HL7"],
+    "automationStatus": "Manual",
+    "estimatedTime": "15 minutes"
+  },
+  {
+    "testCaseId": "MED_TC_002",
+    "testTitle": "Medication Prescription Validation",
+    "objective": "Ensure medication prescription system checks for drug interactions and allergies",
+    "preConditions": "Patient record exists with allergy information",
+    "testSteps": [
+      "Access patient medical record",
+      "Navigate to prescriptions",
+      "Add new medication",
+      "System checks for interactions",
+      "System checks for allergies",
+      "Review warnings if any",
+      "Confirm prescription"
+    ],
+    "expectedOutcome": "System alerts for any drug interactions or allergies before prescription is confirmed",
+    "testPriority": "Critical",
+    "testCategory": "Patient Safety",
+    "complianceStandards": ["FDA", "HIPAA"],
+    "automationStatus": "Automated",
+    "estimatedTime": "5 minutes"
+  }
+]

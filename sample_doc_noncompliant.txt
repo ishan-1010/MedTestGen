@@ -1,0 +1,10 @@
+TODO List App
+
+Features:
+- Add tasks
+- Delete tasks  
+- Mark complete
+
+That's it. Simple app.
+
+No testing needed, it's basic.

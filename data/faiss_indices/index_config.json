@@ -1,0 +1,7 @@
+{
+  "embedding_model": "all-MiniLM-L6-v2",
+  "embedding_dimension": 384,
+  "num_test_cases": 15,
+  "index_type": "Flat L2",
+  "created_date": "2025-09-13T17:10:37.808830"
+}

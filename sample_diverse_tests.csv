@@ -1,0 +1,6 @@
+ID|Scenario|Requirements|Execution Steps|Pass Criteria|Risk Level|Module|Tags
+API-001|REST API Authentication|API should support OAuth 2.0 authentication|Send request without token -> Send with expired token -> Send with valid token|401 for invalid auth -> 200 with valid token|High|Authentication|API,Security,OAuth
+API-002|Rate Limiting Test|API should limit requests to 100 per minute|Send 150 requests within 60 seconds|First 100 succeed -> Remaining get 429 status|Medium|Performance|API,RateLimit
+DB-001|Database Connection Pool|System should handle concurrent database connections|Simulate 50 concurrent users -> Monitor connection pool|All requests processed -> No connection timeouts|High|Database|Performance,Concurrency
+UI-001|Responsive Design Test|Application should work on mobile devices|Open on iPhone -> Open on iPad -> Open on Android|Layout adjusts -> All features accessible|Low|Frontend|UI,Mobile,Responsive
+SEC-001|SQL Injection Prevention|System should prevent SQL injection attacks|Enter SQL commands in input fields -> Test with common injection patterns|No database errors -> Inputs sanitized|Critical|Security|Security,OWASP,SQLi

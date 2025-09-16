@@ -1,0 +1,27 @@
+Feature: Account Registration
+
+User Story:
+As a new user of the "HealthFirst" e-commerce website, I want to be able to create an account so that I can join the "Baby Bunting" loyalty family and track my orders.
+
+Description:
+The registration process should be simple and secure, requiring a valid email and a strong password. Upon successful registration, the user should be logged in and redirected to the homepage.
+
+Acceptance Criteria:
+1. **Successful Registration:** Given a user is on the registration page, when they enter a unique email address, a valid password, and a matching confirmation password, and click "Create Account", then the system should create the account, log the user in, and display a success message.
+
+2. **Existing Email Error:** Given a user is on the registration page, when they enter an email address that already exists in the system, then the system should display an inline error message: "This email address is already registered. Please log in."
+
+3. **Invalid Email Format Error:** Given a user is on the registration page, when they enter an email address in an invalid format (e.g., "user@domain"), then the system should display an inline error message: "Please enter a valid email address."
+
+4. **Password Mismatch Error:** Given a user is on the registration page, when the "Password" and "Confirm Password" fields do not match, then the system should display an inline error message: "Passwords do not match."
+
+5. **Weak Password Error:** Given a user is on the registration page, when they enter a password that does not meet the security requirements (less than 8 characters, no number, no special character), then the system should display an inline error message detailing the requirements.
+
+6. **Blank Fields Error:** Given a user is on the registration page, when they attempt to submit the form with any of the required fields left blank, then each blank field should display an error message: "This field is required."
+
+Additional Requirements:
+- The registration form should be responsive and work on mobile devices
+- Email addresses should be case-insensitive
+- The system should prevent rapid successive registration attempts from the same IP
+- Upon successful registration, a welcome email should be sent to the user
+

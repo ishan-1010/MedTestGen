@@ -1,0 +1,198 @@
+id,title,description,category,priority,compliance,test_steps,expected_result,combined_text
+TC001,Patient Registration with Complete Demographics,"Verify that a new patient can be registered with all required demographic information including name, DOB, address, insurance, and emergency contact",Patient Management,High,"['HIPAA', 'GDPR']","1. Navigate to patient registration
+2. Enter all required fields
+3. Validate insurance
+4. Save patient record",Patient record created successfully with unique MRN assigned,"Test Case: Patient Registration with Complete Demographics
+    Category: Patient Management
+    Priority: High
+    Description: Verify that a new patient can be registered with all required demographic information including name, DOB, address, insurance, and emergency contact
+    Test Steps: 1. Navigate to patient registration
+2. Enter all required fields
+3. Validate insurance
+4. Save patient record
+    Expected Result: Patient record created successfully with unique MRN assigned
+    Compliance: HIPAA, GDPR"
+TC002,Blood Pressure Monitor Integration Test,Test integration with Omron blood pressure monitor device for automatic vital signs capture,Medical Device Integration,Critical,"['FDA 510(k)', 'ISO 13485']","1. Connect BP monitor via Bluetooth
+2. Take patient reading
+3. Verify automatic data transfer
+4. Check data accuracy",BP readings automatically transferred and stored in patient chart within 5 seconds,"Test Case: Blood Pressure Monitor Integration Test
+    Category: Medical Device Integration
+    Priority: Critical
+    Description: Test integration with Omron blood pressure monitor device for automatic vital signs capture
+    Test Steps: 1. Connect BP monitor via Bluetooth
+2. Take patient reading
+3. Verify automatic data transfer
+4. Check data accuracy
+    Expected Result: BP readings automatically transferred and stored in patient chart within 5 seconds
+    Compliance: FDA 510(k), ISO 13485"
+TC003,Medication Allergy Alert System,Verify that system generates appropriate alerts when prescribing medications that patient is allergic to,Clinical Decision Support,Critical,"['FDA', 'ISO 27001']","1. Add penicillin allergy to patient record
+2. Attempt to prescribe amoxicillin
+3. Verify alert appears
+4. Test override with reason",System displays critical allergy alert and requires documented reason for override,"Test Case: Medication Allergy Alert System
+    Category: Clinical Decision Support
+    Priority: Critical
+    Description: Verify that system generates appropriate alerts when prescribing medications that patient is allergic to
+    Test Steps: 1. Add penicillin allergy to patient record
+2. Attempt to prescribe amoxicillin
+3. Verify alert appears
+4. Test override with reason
+    Expected Result: System displays critical allergy alert and requires documented reason for override
+    Compliance: FDA, ISO 27001"
+TC004,HL7 Lab Results Import,Test importing laboratory results via HL7 v2.5 message format from external lab system,Interoperability,High,"['HL7 Standards', 'CLIA']","1. Send HL7 ORU message
+2. Verify message parsing
+3. Check result mapping
+4. Confirm physician notification","Lab results correctly parsed, stored, and physician notified of critical values","Test Case: HL7 Lab Results Import
+    Category: Interoperability
+    Priority: High
+    Description: Test importing laboratory results via HL7 v2.5 message format from external lab system
+    Test Steps: 1. Send HL7 ORU message
+2. Verify message parsing
+3. Check result mapping
+4. Confirm physician notification
+    Expected Result: Lab results correctly parsed, stored, and physician notified of critical values
+    Compliance: HL7 Standards, CLIA"
+TC005,Emergency Department Triage Workflow,Test complete ED triage workflow including ESI level assignment and vital signs documentation,Clinical Workflow,Critical,"['EMTALA', 'Joint Commission']","1. Register walk-in patient
+2. Complete triage assessment
+3. Assign ESI level
+4. Document vital signs
+5. Queue for provider",Patient triaged within 10 minutes with appropriate ESI level and queued correctly,"Test Case: Emergency Department Triage Workflow
+    Category: Clinical Workflow
+    Priority: Critical
+    Description: Test complete ED triage workflow including ESI level assignment and vital signs documentation
+    Test Steps: 1. Register walk-in patient
+2. Complete triage assessment
+3. Assign ESI level
+4. Document vital signs
+5. Queue for provider
+    Expected Result: Patient triaged within 10 minutes with appropriate ESI level and queued correctly
+    Compliance: EMTALA, Joint Commission"
+TC006,GDPR Data Export Request,Verify system can export all patient data in machine-readable format for GDPR compliance,Compliance,High,"['GDPR', 'Data Protection']","1. Submit data export request
+2. Verify all data categories included
+3. Check export format
+4. Validate completeness",Complete patient data exported in JSON/XML format within 30 days,"Test Case: GDPR Data Export Request
+    Category: Compliance
+    Priority: High
+    Description: Verify system can export all patient data in machine-readable format for GDPR compliance
+    Test Steps: 1. Submit data export request
+2. Verify all data categories included
+3. Check export format
+4. Validate completeness
+    Expected Result: Complete patient data exported in JSON/XML format within 30 days
+    Compliance: GDPR, Data Protection"
+TC007,Radiology PACS Image Viewer,Test viewing and manipulating DICOM images from PACS system,Imaging,High,"['DICOM', 'FDA']","1. Open patient imaging study
+2. Test zoom/pan/window level
+3. Add measurements
+4. Create report",Images load within 3 seconds with full manipulation capabilities,"Test Case: Radiology PACS Image Viewer
+    Category: Imaging
+    Priority: High
+    Description: Test viewing and manipulating DICOM images from PACS system
+    Test Steps: 1. Open patient imaging study
+2. Test zoom/pan/window level
+3. Add measurements
+4. Create report
+    Expected Result: Images load within 3 seconds with full manipulation capabilities
+    Compliance: DICOM, FDA"
+TC008,Prescription Drug Monitoring Integration,Verify integration with state PDMP for controlled substance monitoring,Pharmacy,Critical,"['DEA', 'State Regulations']","1. Prescribe controlled substance
+2. Query PDMP database
+3. Review patient history
+4. Document review",PDMP query completed and documented before prescription finalized,"Test Case: Prescription Drug Monitoring Integration
+    Category: Pharmacy
+    Priority: Critical
+    Description: Verify integration with state PDMP for controlled substance monitoring
+    Test Steps: 1. Prescribe controlled substance
+2. Query PDMP database
+3. Review patient history
+4. Document review
+    Expected Result: PDMP query completed and documented before prescription finalized
+    Compliance: DEA, State Regulations"
+TC009,Telemedicine Video Consultation,"Test end-to-end telemedicine visit including video, audio, and documentation",Telehealth,High,"['HIPAA', 'State Licensure']","1. Schedule virtual visit
+2. Test video/audio quality
+3. Complete consultation
+4. Generate visit summary",Successful encrypted video consultation with complete documentation,"Test Case: Telemedicine Video Consultation
+    Category: Telehealth
+    Priority: High
+    Description: Test end-to-end telemedicine visit including video, audio, and documentation
+    Test Steps: 1. Schedule virtual visit
+2. Test video/audio quality
+3. Complete consultation
+4. Generate visit summary
+    Expected Result: Successful encrypted video consultation with complete documentation
+    Compliance: HIPAA, State Licensure"
+TC010,Clinical Trial Enrollment Screening,Test automated screening for clinical trial eligibility based on patient criteria,Research,Medium,"['GCP', '21 CFR Part 11']","1. Define trial criteria
+2. Run eligibility query
+3. Review matched patients
+4. Generate recruitment list",System identifies all eligible patients meeting inclusion/exclusion criteria,"Test Case: Clinical Trial Enrollment Screening
+    Category: Research
+    Priority: Medium
+    Description: Test automated screening for clinical trial eligibility based on patient criteria
+    Test Steps: 1. Define trial criteria
+2. Run eligibility query
+3. Review matched patients
+4. Generate recruitment list
+    Expected Result: System identifies all eligible patients meeting inclusion/exclusion criteria
+    Compliance: GCP, 21 CFR Part 11"
+TC011,Insulin Pump Data Integration,Test integration with Medtronic insulin pump for diabetes management,Medical Device Integration,High,"['FDA Class II', 'ISO 13485']","1. Connect insulin pump
+2. Download pump data
+3. Analyze glucose patterns
+4. Generate recommendations",Pump data successfully imported with trend analysis and recommendations,"Test Case: Insulin Pump Data Integration
+    Category: Medical Device Integration
+    Priority: High
+    Description: Test integration with Medtronic insulin pump for diabetes management
+    Test Steps: 1. Connect insulin pump
+2. Download pump data
+3. Analyze glucose patterns
+4. Generate recommendations
+    Expected Result: Pump data successfully imported with trend analysis and recommendations
+    Compliance: FDA Class II, ISO 13485"
+TC012,Audit Trail for Controlled Substances,Verify complete audit trail for all controlled substance prescriptions,Compliance,Critical,"['DEA', '21 CFR Part 11']","1. Prescribe controlled substance
+2. Modify prescription
+3. Cancel prescription
+4. Review audit log","All actions logged with timestamp, user, and reason for change","Test Case: Audit Trail for Controlled Substances
+    Category: Compliance
+    Priority: Critical
+    Description: Verify complete audit trail for all controlled substance prescriptions
+    Test Steps: 1. Prescribe controlled substance
+2. Modify prescription
+3. Cancel prescription
+4. Review audit log
+    Expected Result: All actions logged with timestamp, user, and reason for change
+    Compliance: DEA, 21 CFR Part 11"
+TC013,Sepsis Alert Algorithm,Test early warning system for sepsis detection based on vital signs and lab values,Clinical Decision Support,Critical,"['CMS SEP-1', 'Clinical Guidelines']","1. Enter abnormal vitals
+2. Add lab results
+3. Verify alert triggers
+4. Test response workflow",Sepsis alert triggered within 1 hour of meeting criteria with bundled orders,"Test Case: Sepsis Alert Algorithm
+    Category: Clinical Decision Support
+    Priority: Critical
+    Description: Test early warning system for sepsis detection based on vital signs and lab values
+    Test Steps: 1. Enter abnormal vitals
+2. Add lab results
+3. Verify alert triggers
+4. Test response workflow
+    Expected Result: Sepsis alert triggered within 1 hour of meeting criteria with bundled orders
+    Compliance: CMS SEP-1, Clinical Guidelines"
+TC014,Patient Portal Secure Messaging,Test secure messaging between patients and providers through patient portal,Patient Engagement,Medium,"['HIPAA', 'Meaningful Use']","1. Patient sends message
+2. Provider receives notification
+3. Provider responds
+4. Check encryption",Messages encrypted end-to-end with delivery confirmation,"Test Case: Patient Portal Secure Messaging
+    Category: Patient Engagement
+    Priority: Medium
+    Description: Test secure messaging between patients and providers through patient portal
+    Test Steps: 1. Patient sends message
+2. Provider receives notification
+3. Provider responds
+4. Check encryption
+    Expected Result: Messages encrypted end-to-end with delivery confirmation
+    Compliance: HIPAA, Meaningful Use"
+TC015,Vaccine Administration Record,Test complete vaccine administration workflow including inventory and reporting,Immunization,High,"['CDC', 'State Registry']","1. Check vaccine inventory
+2. Document administration
+3. Update immunization record
+4. Report to state registry",Vaccine documented and reported to state registry within 24 hours,"Test Case: Vaccine Administration Record
+    Category: Immunization
+    Priority: High
+    Description: Test complete vaccine administration workflow including inventory and reporting
+    Test Steps: 1. Check vaccine inventory
+2. Document administration
+3. Update immunization record
+4. Report to state registry
+    Expected Result: Vaccine documented and reported to state registry within 24 hours
+    Compliance: CDC, State Registry"
