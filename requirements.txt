@@ -33,6 +33,7 @@ pymongo[srv]>=4.5.0
 # Authentication
 bcrypt>=4.0.0
 cryptography>=41.0.0
+certifi>=2023.7.22
 
 # Optional (for development)
 # pytest>=7.0.0
