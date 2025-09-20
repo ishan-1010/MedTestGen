@@ -1,8 +1,12 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# C extensions
 *.so
+
+# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -19,77 +23,98 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# Virtual Environment
+# PyInstaller
+#  Usually these files are written by a script, but you might want to
+#  remember them anyway.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Virtualenv
 venv/
 env/
 ENV/
-.venv
 
-# IDE
-.vscode/
+# Conda
+.conda
+
+# IDEs
 .idea/
-*.swp
-*.swo
-*~
-.DS_Store
+.vscode/
+*.iml
 
-# Environment Variables
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Data files
+/data/
+/experiments/
+
+# Secrets
 .env
-.env.local
-.env.*.local
+.env.*
+secrets.toml
+credentials.json
+*.pem
+*.key
 my_pat.txt
 
-# Streamlit
-.streamlit/secrets.toml
+# FAISS indices
+*.index
+
+# Logs
 *.log
+logs/
 
-# Data - Keep structure but not content
-data/test_cases/*.json
-!data/test_cases/.gitkeep
-data/uploaded_documents/*
-!data/uploaded_documents/.gitkeep
-data/faiss_indices/*.index
-data/faiss_indices/*.pkl
-!data/faiss_indices/.gitkeep
-
-# Backups
-data/backup_old_structure*/
-data/saved_test_cases/
-data/generated_test_cases/
-data/imported_test_suites/
-
-# Temporary files
-*.tmp
-*.temp
-*.bak
-.cache/
-
-# Jupyter Notebooks
-.ipynb_checkpoints/
-*.ipynb_checkpoints
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-*.cover
-.hypothesis/
-
-# Documentation build
-docs/_build/
-docs/_static/
-docs/_templates/
-
-# OS Files
-Thumbs.db
-Desktop.ini
-
-# Migration scripts (if temporary)
-migrate*.py
-
-# Sample files (optional - uncomment if you don't want to track)
-# sample_*.csv
-# sample_*.json
-# sample_*.txt
-# sample_*.md
+# Local test files
+test_*.py
+*.csv
+*.json
+*.md
+*.txt
