@@ -1,7 +1,7 @@
 """
-AI-Powered Test Case Generator for Healthcare/MedTech
-RAG Pipeline with Gemini API - NASSCOM Hackathon
-Version 7: DevOps Export Formats with AI Customization (NASSCOM Requirement #10)
+🧪 AI-Powered Test Case Generator - Version 9.0
+Modern UI with Simplified Folder Structure
+NASSCOM Healthcare/MedTech Testing Solution
 """
 
 import streamlit as st
@@ -16,6 +16,8 @@ import re
 import io
 import tempfile
 import shutil
+import time
+import random
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
@@ -28,23 +30,1095 @@ from docx import Document
 import xml.etree.ElementTree as ET
 import chardet
 
-# Import UI enhancements
-try:
-    from ui_enhancements import (
-        inject_modern_css, show_thinking_animation, 
-        show_progress_with_status, display_metric_card,
-        show_success_animation, create_welcome_screen,
-        THINKING_MESSAGES, COMPLIANCE_MESSAGES,
-        IMPORT_MESSAGES, EXPORT_MESSAGES
-    )
-    UI_ENHANCED = True
-except ImportError:
-    UI_ENHANCED = False
-
 # Load environment variables
 load_dotenv()
 
-# Configuration - SIMPLIFIED FOLDER STRUCTURE (v8)
+# ==================================
+# 🎨 PAGE CONFIGURATION (MUST BE FIRST)
+# ==================================
+
+st.set_page_config(
+    page_title="AI Test Generator Pro",
+    page_icon="🧪",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+    menu_items={
+        'Get Help': 'https://nasscom.in',
+        'About': "AI Test Generator v9.0 - Modern UI with Clean Architecture"
+    }
+)
+
+# ==================================
+# 🎨 MODERN UI STYLING AND ANIMATIONS
+# ==================================
+
+def inject_modern_css():
+    """Inject clean, professional CSS with smooth transitions"""
+    st.markdown("""
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+    /* Modern Elegant Color Palette - Aurora Theme */
+    :root {
+        --primary: #8B5CF6;        /* Vibrant Purple */
+        --primary-light: #A78BFA;  /* Light Purple */
+        --primary-dark: #7C3AED;   /* Deep Purple */
+        --secondary: #14B8A6;      /* Teal */
+        --accent: #F97316;         /* Sunset Orange */
+        --success: #10B981;        /* Emerald Green */
+        --danger: #F43F5E;         /* Rose Red */
+        --warning: #EAB308;        /* Golden Yellow */
+        --info: #3B82F6;           /* Sky Blue */
+        
+        /* Sophisticated Dark Backgrounds */
+        --bg-dark: #0A0E1A;        /* Rich Dark Navy */
+        --bg-medium: #141824;      /* Deep Midnight */
+        --bg-light: #1F2937;       /* Charcoal Blue */
+        --bg-surface: #262B3B;     /* Surface Blue */
+        
+        /* Text Colors with Better Contrast */
+        --text-primary: #F9FAFB;   /* Pure White */
+        --text-secondary: #D1D5DB; /* Light Gray */
+        --text-muted: #9CA3AF;     /* Muted Gray */
+        
+        /* Border & Overlay Colors */
+        --border: #374151;         /* Subtle Gray Border */
+        --border-light: #4B5563;   /* Light Border */
+        --overlay: rgba(139, 92, 246, 0.1); /* Purple Overlay */
+        
+        /* Gradient Definitions */
+        --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+        --gradient-secondary: linear-gradient(135deg, #14B8A6 0%, #3B82F6 100%);
+        --gradient-dark: linear-gradient(135deg, #0A0E1A 0%, #1F2937 100%);
+        --gradient-surface: linear-gradient(135deg, #141824 0%, #262B3B 100%);
+        --gradient-glow: linear-gradient(135deg, #8B5CF6 0%, #14B8A6 50%, #F97316 100%);
+    }
+        
+        /* Premium gradient background with subtle animation */
+        .stApp {
+            background: var(--gradient-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Animated gradient overlay */
+        .stApp::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(20, 184, 166, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(249, 115, 22, 0.1) 0%, transparent 50%);
+            animation: gradientShift 20s ease infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.1); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(1.1); }
+        }
+        
+        /* Main container with glassmorphism */
+        .main .block-container {
+            background: linear-gradient(135deg, 
+                rgba(20, 24, 36, 0.8) 0%, 
+                rgba(31, 41, 55, 0.6) 50%,
+                rgba(38, 43, 59, 0.8) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(20px) saturate(150%);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .main .block-container:hover {
+            box-shadow: 0 12px 48px rgba(139, 92, 246, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Typography - Clean and readable */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: var(--text-primary);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            transition: color 0.3s ease;
+        }
+        
+        /* Premium Aurora-themed buttons */
+        .stButton > button {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.025em;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            z-index: 1;
+        }
+        
+        /* Gradient overlay effect */
+        .stButton > button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        /* Ripple effect */
+        .stButton > button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: -1;
+        }
+        
+        /* Hover state with glow effect */
+        .stButton > button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4),
+                        0 0 40px rgba(139, 92, 246, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #A78BFA 0%, #EC4899 100%);
+        }
+        
+        .stButton > button:hover::before {
+            opacity: 1;
+        }
+        
+        .stButton > button:hover::after {
+            width: 300px;
+            height: 300px;
+            opacity: 0;
+        }
+        
+        /* Active/Click state */
+        .stButton > button:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Success button variant */
+        .stButton > button[kind="primary"] {
+            background: var(--gradient-secondary);
+            box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+        }
+        
+        .stButton > button[kind="primary"]:hover {
+            box-shadow: 0 8px 25px rgba(20, 184, 166, 0.4);
+            background: linear-gradient(135deg, #5EEAD4 0%, #60A5FA 100%);
+        }
+        
+        /* Secondary button variant */
+        .stButton > button[kind="secondary"] {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary-light);
+        }
+        
+        .stButton > button[kind="secondary"]:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-light);
+        }
+        
+        /* Button loading state */
+        .stButton > button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        /* Button icon animation */
+        .stButton > button i,
+        .stButton > button svg {
+            transition: transform 0.3s ease;
+            margin-right: 0.5rem;
+        }
+        
+        .stButton > button:hover i,
+        .stButton > button:hover svg {
+            transform: rotate(5deg) scale(1.1);
+        }
+        
+        /* Pulse animation for important buttons */
+        @keyframes buttonPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+            }
+        }
+        
+        .stButton > button.pulse {
+            animation: buttonPulse 2s infinite;
+        }
+        
+        /* Glow effect for hover */
+        @keyframes buttonGlow {
+            0%, 100% {
+                box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+            }
+            50% {
+                box-shadow: 0 4px 16px rgba(79, 70, 229, 0.5);
+            }
+        }
+        
+        .stButton > button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        
+        /* Download button special style */
+        .stDownloadButton > button {
+            background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(6, 182, 212, 0.25);
+        }
+        
+        .stDownloadButton > button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+        
+        /* Form submit button special style */
+        button[type="submit"] {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+            font-size: 1rem !important;
+            padding: 0.875rem !important;
+            margin-top: 0.5rem;
+        }
+        
+        /* Aurora-themed input fields */
+        .stTextInput > div > div > input,
+        .stTextArea > div > div > textarea,
+        .stSelectbox > div > div > select,
+        .stNumberInput > div > div > input {
+            background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-medium) 100%);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2),
+                        0 1px 2px rgba(139, 92, 246, 0.1);
+            position: relative;
+            background-clip: padding-box;
+        }
+        
+        .stTextInput > div > div > input::before,
+        .stTextArea > div > div > textarea::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: -1;
+            margin: -2px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--border) 0%, var(--bg-light) 100%);
+        }
+        
+        .stTextInput > div > div > input:hover,
+        .stTextArea > div > div > textarea:hover,
+        .stSelectbox > div > div > select:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-surface) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.15), 
+                        inset 0 2px 4px rgba(139, 92, 246, 0.05);
+        }
+        
+        .stTextInput > div > div > input:focus,
+        .stTextArea > div > div > textarea:focus,
+        .stSelectbox > div > div > select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2), 
+                        0 6px 20px rgba(139, 92, 246, 0.2),
+                        inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-light) 100%);
+            transform: translateY(-2px);
+        }
+        
+        /* Animated placeholder */
+        .stTextInput > div > div > input::placeholder,
+        .stTextArea > div > div > textarea::placeholder {
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+        
+        .stTextInput > div > div > input:focus::placeholder,
+        .stTextArea > div > div > textarea:focus::placeholder {
+            opacity: 0.4;
+            transform: translateX(5px);
+        }
+        
+        /* Aurora-themed metrics cards */
+        [data-testid="metric-container"] {
+            background: var(--gradient-surface);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.02);
+        }
+        
+        [data-testid="metric-container"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-primary);
+            transition: left 0.3s ease;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+        
+        [data-testid="metric-container"]:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+            border-color: var(--primary-light);
+            background: linear-gradient(135deg, 
+                rgba(38, 43, 59, 0.9) 0%, 
+                rgba(31, 41, 55, 0.9) 100%);
+        }
+        
+        [data-testid="metric-container"]:hover::before {
+            left: 0;
+        }
+        
+        [data-testid="metric-container"] [data-testid="metric-value"] {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        /* Aurora tabs with glowing effect */
+        .stTabs [data-baseweb="tab-list"] {
+            background: var(--gradient-surface);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            padding: 6px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2),
+                        0 2px 8px rgba(139, 92, 246, 0.1);
+            position: relative;
+        }
+        
+        .stTabs [data-baseweb="tab"] {
+            color: var(--text-secondary);
+            background: transparent;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            font-weight: 500;
+            padding: 0.6rem 1.2rem !important;
+            overflow: hidden;
+        }
+        
+        .stTabs [data-baseweb="tab"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, var(--overlay) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .stTabs [data-baseweb="tab"]:hover {
+            color: var(--text-primary);
+            transform: translateY(-1px);
+            background: rgba(139, 92, 246, 0.1);
+        }
+        
+        .stTabs [data-baseweb="tab"]:hover::before {
+            opacity: 1;
+        }
+        
+        .stTabs [aria-selected="true"] {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px) scale(1.02);
+        }
+        
+        /* Tab underline animation */
+        .stTabs [data-baseweb="tab-panel"] {
+            animation: tabFadeIn 0.5s ease;
+        }
+        
+        @keyframes tabFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Progress bar with animation */
+        .stProgress > div > div > div > div {
+            background: var(--primary);
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stProgress > div > div > div > div::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Premium expanders with smooth animations */
+        .streamlit-expanderHeader {
+            background: linear-gradient(135deg, var(--bg-medium) 0%, rgba(30, 41, 59, 0.6) 100%);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary) !important;
+            padding: 0.75rem 1rem !important;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .streamlit-expanderHeader::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .streamlit-expanderHeader:hover {
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-medium) 100%);
+            border-color: var(--primary);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+        
+        .streamlit-expanderHeader:hover::before {
+            transform: scaleY(1);
+        }
+        
+        /* Expander content animation */
+        .streamlit-expanderContent {
+            animation: expanderSlide 0.3s ease;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 0 0 10px 10px;
+            padding: 1rem !important;
+        }
+        
+        @keyframes expanderSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Checkboxes and Radio buttons */
+        .stCheckbox > label,
+        .stRadio > label {
+            transition: all 0.2s ease;
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+        
+        .stCheckbox > label:hover,
+        .stRadio > label:hover {
+            background: rgba(79, 70, 229, 0.05);
+            transform: translateX(2px);
+        }
+        
+        /* Custom checkbox styling */
+        .stCheckbox > label > span:first-child,
+        .stRadio > div > label > span:first-child {
+            border: 2px solid var(--border) !important;
+            background: var(--bg-medium) !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .stCheckbox > label > span:first-child:checked,
+        .stRadio > div > label > span:first-child:checked {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            animation: checkBounce 0.3s ease;
+        }
+        
+        @keyframes checkBounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Slider styling */
+        .stSlider > div > div > div {
+            background: var(--bg-medium) !important;
+        }
+        
+        .stSlider > div > div > div > div {
+            background: var(--primary) !important;
+            transition: all 0.2s ease;
+        }
+        
+        .stSlider > div > div > div > div > div {
+            background: var(--primary-light) !important;
+            border: 3px solid white !important;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3) !important;
+            transition: all 0.2s ease;
+        }
+        
+        .stSlider > div > div > div > div > div:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.5) !important;
+        }
+        
+        /* Premium alerts with enhanced animations */
+        .stAlert {
+            animation: alertSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+            border-left: 4px solid;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(30, 41, 59, 0.6) 100%);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stAlert::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        /* Success alert */
+        .stAlert[data-baseweb="notification"][kind="success"] {
+            border-left-color: var(--success) !important;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, var(--bg-surface) 100%);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+        
+        /* Error alert */
+        .stAlert[data-baseweb="notification"][kind="error"] {
+            border-left-color: var(--danger) !important;
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, var(--bg-surface) 100%);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.2);
+        }
+        
+        /* Warning alert */
+        .stAlert[data-baseweb="notification"][kind="warning"] {
+            border-left-color: var(--warning) !important;
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, var(--bg-surface) 100%);
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+        }
+        
+        /* Info alert */
+        .stAlert[data-baseweb="notification"][kind="info"] {
+            border-left-color: var(--info) !important;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, var(--bg-surface) 100%);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+        
+        @keyframes alertSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+        
+        /* Success/Error/Warning/Info messages */
+        .stSuccess, .stError, .stWarning, .stInfo {
+            border-radius: 10px !important;
+            padding: 1rem 1.25rem !important;
+            font-weight: 500;
+            animation: messagePopIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes messagePopIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(-10px);
+            }
+            50% {
+                transform: scale(1.05) translateY(2px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        /* DataFrames and Tables */
+        .stDataFrame {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stDataFrame > div {
+            background: var(--bg-medium) !important;
+        }
+        
+        .stDataFrame table {
+            background: transparent !important;
+        }
+        
+        .stDataFrame thead tr th {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            padding: 0.75rem !important;
+            border: none !important;
+        }
+        
+        .stDataFrame tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        .stDataFrame tbody tr:hover {
+            background: rgba(79, 70, 229, 0.05) !important;
+            transform: scale(1.01);
+        }
+        
+        .stDataFrame tbody tr td {
+            padding: 0.75rem !important;
+            border-bottom: 1px solid var(--border) !important;
+            font-weight: 500;
+        }
+        
+        /* Code blocks */
+        .stCodeBlock {
+            border-radius: 10px !important;
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f172a 100%) !important;
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stCodeBlock pre {
+            color: #e2e8f0 !important;
+            font-family: 'Fira Code', 'Consolas', monospace !important;
+            padding: 1rem !important;
+        }
+        
+        /* Columns and containers */
+        [data-testid="column"] {
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+        }
+        
+        [data-testid="column"]:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Aurora sidebar with gradient glow */
+        section[data-testid="stSidebar"] {
+            background: linear-gradient(135deg, 
+                rgba(20, 24, 36, 0.98) 0%, 
+                rgba(10, 14, 26, 0.98) 100%);
+            border-right: 1px solid rgba(139, 92, 246, 0.2);
+            backdrop-filter: blur(20px) saturate(150%);
+            transition: all 0.3s ease;
+            box-shadow: 2px 0 30px rgba(139, 92, 246, 0.1),
+                        inset -1px 0 0 rgba(139, 92, 246, 0.2);
+        }
+        
+        section[data-testid="stSidebar"] > div {
+            padding: 1.5rem 1rem;
+        }
+        
+        section[data-testid="stSidebar"] .element-container {
+            margin-bottom: 1rem;
+        }
+        
+        /* Sidebar headers */
+        section[data-testid="stSidebar"] h1,
+        section[data-testid="stSidebar"] h2,
+        section[data-testid="stSidebar"] h3 {
+            color: var(--primary-light) !important;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Multiselect */
+        .stMultiSelect > div {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .stMultiSelect > div:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+        
+        /* Date input */
+        .stDateInput > div {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .stDateInput > div:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+        
+        /* Spinner animation */
+        .stSpinner > div {
+            border-color: var(--primary) !important;
+        }
+        
+        /* Enhanced spinner */
+        .stSpinner {
+            position: relative;
+        }
+        
+        .stSpinner::before {
+            content: '⚙️';
+            position: absolute;
+            font-size: 2rem;
+            animation: spin 2s linear infinite;
+            opacity: 0.3;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Empty state */
+        .stEmpty {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        /* Modal/Dialog styling */
+        [data-baseweb="modal"] {
+            background: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(5px);
+        }
+        
+        [data-baseweb="modal"] > div {
+            background: linear-gradient(135deg, var(--bg-medium) 0%, var(--bg-dark) 100%) !important;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Color picker */
+        .stColorPicker > div > div {
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .stColorPicker > div > div:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+        
+        /* Select slider */
+        .stSelectSlider > div {
+            background: var(--bg-medium);
+            border-radius: 10px;
+            padding: 0.5rem;
+        }
+        
+        /* JSON viewer */
+        .stJson {
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f172a 100%) !important;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+        }
+        
+        /* Special hover effects for interactive elements */
+        .clickable-element {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .clickable-element:hover {
+            transform: translateY(-2px) scale(1.02);
+            filter: brightness(1.1);
+        }
+        
+        /* Tooltips */
+        [data-baseweb="tooltip"] {
+            background: var(--primary) !important;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            animation: tooltipFadeIn 0.2s ease;
+        }
+        
+        @keyframes tooltipFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Premium file uploader with animations */
+        [data-testid="stFileUploadDropzone"] {
+            background: linear-gradient(135deg, var(--bg-medium) 0%, rgba(30, 41, 59, 0.4) 100%);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        [data-testid="stFileUploadDropzone"]::before {
+            content: '📁';
+            position: absolute;
+            font-size: 4rem;
+            opacity: 0.1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s ease;
+        }
+        
+        [data-testid="stFileUploadDropzone"]:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0.05) 100%);
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.15);
+        }
+        
+        [data-testid="stFileUploadDropzone"]:hover::before {
+            opacity: 0.2;
+            transform: translate(-50%, -50%) scale(1.2) rotate(5deg);
+        }
+        
+        /* Drag over state */
+        [data-testid="stFileUploadDropzone"][data-dragging="true"] {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            animation: pulse 1s infinite;
+        }
+        
+        /* File upload button inside */
+        [data-testid="stFileUploadDropzone"] button {
+            background: var(--primary) !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        [data-testid="stFileUploadDropzone"] button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-medium);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+        
+        /* Smooth page transitions */
+        * {
+            transition: background-color 0.2s ease, 
+                        border-color 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+        
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Fade in animation for content */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        .element-container {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+# AI Thinking Messages
+AI_THINKING_MESSAGES = [
+    "🧠 Analyzing requirements with advanced AI...",
+    "🔍 Searching healthcare compliance standards...",
+    "💡 Identifying edge cases and test scenarios...",
+    "🏥 Applying medical device testing best practices...",
+    "📊 Calculating optimal test coverage...",
+    "🔬 Synthesizing comprehensive test cases...",
+    "⚡ Optimizing test execution flow...",
+    "🎯 Focusing on patient safety requirements...",
+    "🛡️ Ensuring FDA and ISO compliance...",
+    "🤖 Leveraging machine learning patterns..."
+]
+
+def show_ai_thinking(duration=3):
+    """Display animated AI thinking messages with smooth transitions"""
+    placeholder = st.empty()
+    progress = st.progress(0)
+    
+    for i in range(duration * 2):
+        msg = random.choice(AI_THINKING_MESSAGES)
+        # Clean, animated message display
+        placeholder.markdown(f"""
+        <div style='text-align: center; 
+                    padding: 1.5rem; 
+                    background: #1E293B; 
+                    border: 1px solid #475569; 
+                    border-radius: 8px; 
+                    margin: 1rem 0;
+                    animation: slideIn 0.3s ease;'>
+            <div style='font-size: 2rem; margin-bottom: 0.5rem; animation: pulse 1s ease infinite;'>
+                {'🧠🔍💡🏥📊🔬⚡🎯🛡️🤖'[i % 10]}
+            </div>
+            <p style='color: #F1F5F9; font-size: 1rem; font-weight: 500; margin: 0;'>
+                {msg}
+            </p>
+            <div style='margin-top: 0.5rem; color: #6366F1; font-size: 0.875rem;'>
+                {int((i + 1) / (duration * 2) * 100)}% Complete
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        progress.progress((i + 1) / (duration * 2))
+        time.sleep(0.5)
+    
+    placeholder.empty()
+    progress.empty()
+
+# Configuration - SIMPLIFIED FOLDER STRUCTURE (v9)
 # Knowledge Base & Documents
 DOCUMENTS_PATH = "data/documents"  # Sample docs for RAG (PRDs, user stories, API specs)
 UPLOADED_DOCS_PATH = "data/uploaded_documents"  # User uploads + compliance reports
@@ -57,7 +1131,7 @@ FAISS_INDEX_PATH = "data/faiss_indices"  # FAISS vector database for RAG
 
 # Models
 EMBEDDING_MODEL_NAME = 'all-MiniLM-L6-v2'
-GEMINI_MODEL_NAME = 'gemini-2.5-flash'
+GEMINI_MODEL_NAME = 'gemini-2.0-flash-exp'  # Latest model
 
 # NASSCOM Compliance Requirements
 NASSCOM_REQUIREMENTS = {
@@ -93,104 +1167,43 @@ NASSCOM_REQUIREMENTS = {
 st.set_page_config(
     page_title="AI Test Case Generator - NASSCOM", 
     page_icon="🧪",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 # Custom CSS for better styling
 st.markdown("""
 <style>
-    /* Modern gradient buttons */
-    div.stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-        color: white !important;
-        border: none !important;
-        padding: 0.75rem 2rem !important;
-        border-radius: 50px !important;
-        font-weight: 600 !important;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
-        transition: all 0.3s ease !important;
+    .stButton > button {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
     }
-    
-    div.stButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
-    }
-    
-    /* Modern metrics */
-    [data-testid="metric-container"] {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
-        border: 1px solid rgba(99, 102, 241, 0.15);
-        padding: 1.2rem;
-        border-radius: 15px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-    }
-    
-    /* Animated progress */
-    .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%) !important;
-    }
-    
-    /* Modern tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
-        background: rgba(0, 0, 0, 0.05);
-        padding: 6px;
-        border-radius: 15px;
-    }
-    
-    .stTabs [aria-selected="true"] {
-        background: var(--background-color, white) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        color: #6366F1 !important;
-    }
-    
-    /* Enhanced cards */
     .metric-card {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
-        padding: 1.5rem;
-        border-radius: 15px;
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        background-color: #f0f2f6;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 5px;
     }
-    
-    /* Status indicators */
     .compliance-pass {
-        background: linear-gradient(135deg, #10B98120 0%, #10B98110 100%);
-        color: #10B981;
-        font-weight: bold;
-        padding: 0.75rem 1.5rem;
-        border-radius: 50px;
-        border: 1px solid #10B98140;
+        background-color: #d4edda;
+        color: #155724;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 5px 0;
     }
-    
     .compliance-fail {
-        background: linear-gradient(135deg, #EF444420 0%, #EF444410 100%);
-        color: #EF4444;
-        font-weight: bold;
-        padding: 0.75rem 1.5rem;
-        border-radius: 50px;
-        border: 1px solid #EF444440;
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 5px 0;
     }
-    
     .compliance-warning {
-        background: linear-gradient(135deg, #F59E0B20 0%, #F59E0B10 100%);
-        color: #F59E0B;
-        font-weight: bold;
-        padding: 0.75rem 1.5rem;
-        border-radius: 50px;
-        border: 1px solid #F59E0B40;
-    }
-    
-    /* Enhanced inputs */
-    .stTextInput input, .stTextArea textarea {
-        border-radius: 10px !important;
-        border: 2px solid #e5e7eb !important;
-    }
-    
-    .stTextInput input:focus, .stTextArea textarea:focus {
-        border-color: #6366F1 !important;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 5px 0;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -2050,20 +3063,55 @@ def save_test_case(test_case: Dict, format: str = 'json'):
 
 # MAIN UI
 def main():
-    # Inject modern CSS if available
-    if UI_ENHANCED:
-        inject_modern_css()
+    # Apply modern CSS
+    inject_modern_css()
     
-    # Modern header with gradient
+    # Clean, professional header
     st.markdown("""
-    <h1 style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-               -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-               font-size: 3rem; font-weight: 700;">
-        🧪 AI Test Case Generator
-    </h1>
-    <p style="text-align: center; color: #6B7280; font-size: 1.2rem; margin-top: -1rem;">
-        NASSCOM Healthcare/MedTech Testing Solution - Powered by AI
-    </p>
+    <div style='text-align: center; padding: 2.5rem 0; animation: fadeIn 0.8s ease;'>
+        <h1 style='font-size: 3rem; 
+                   color: #F1F5F9;
+                   font-weight: 700;
+                   margin-bottom: 0.5rem;
+                   letter-spacing: -0.03em;'>
+            🧪 AI Test Generator Pro
+        </h1>
+        <p style='font-size: 1.1rem; color: #CBD5E1; margin-top: 0.5rem; font-weight: 400;'>
+            NASSCOM Healthcare/MedTech Testing Solution • Version 9.0
+        </p>
+        <div style='margin-top: 1.5rem; display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;'>
+            <span style='background: #1E293B; 
+                         border: 1px solid #475569;
+                         padding: 0.375rem 0.875rem; 
+                         border-radius: 6px; 
+                         color: #CBD5E1; 
+                         font-size: 0.875rem;
+                         font-weight: 500;
+                         transition: all 0.2s ease;'>
+                ✨ Clean Architecture
+            </span>
+            <span style='background: #1E293B; 
+                         border: 1px solid #475569;
+                         padding: 0.375rem 0.875rem; 
+                         border-radius: 6px; 
+                         color: #CBD5E1; 
+                         font-size: 0.875rem;
+                         font-weight: 500;
+                         transition: all 0.2s ease;'>
+                🚀 Enhanced Performance
+            </span>
+            <span style='background: #1E293B; 
+                         border: 1px solid #475569;
+                         padding: 0.375rem 0.875rem; 
+                         border-radius: 6px; 
+                         color: #CBD5E1; 
+                         font-size: 0.875rem;
+                         font-weight: 500;
+                         transition: all 0.2s ease;'>
+                ⚡ AI-Powered
+            </span>
+        </div>
+    </div>
     """, unsafe_allow_html=True)
     
     # Load saved tests on first run (unified from single directory)
@@ -2076,63 +3124,284 @@ def main():
     
     # Sidebar for system info
     with st.sidebar:
-        st.header("📊 System Status")
+        # Animated Logo Header
+        st.markdown("""
+        <div style='text-align: center; 
+                    padding: 1.5rem 0; 
+                    margin-bottom: 1rem;
+                    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+                    border-radius: 12px;
+                    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+                    animation: pulse 3s ease infinite;'>
+            <div style='font-size: 2.5rem; margin-bottom: 0.5rem; animation: float 3s ease-in-out infinite;'>
+                🧪
+            </div>
+            <h2 style='color: white; 
+                       margin: 0; 
+                       font-size: 1.2rem; 
+                       font-weight: 700; 
+                       letter-spacing: 0.1em;
+                       text-transform: uppercase;'>
+                Test Generator
+            </h2>
+            <p style='color: rgba(255, 255, 255, 0.9); 
+                      margin: 0.25rem 0 0 0; 
+                      font-size: 0.8rem;
+                      font-weight: 400;'>
+                Healthcare Edition v9.0
+            </p>
+        </div>
+        
+        <style>
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        # Quick Actions
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #141824 0%, #262B3B 100%);
+                    border-radius: 10px;
+                    padding: 0.75rem;
+                    margin-bottom: 1rem;
+                    border: 1px solid rgba(139, 92, 246, 0.2);'>
+            <h3 style='color: #A78BFA; 
+                       font-size: 0.9rem; 
+                       margin: 0 0 0.5rem 0;
+                       text-transform: uppercase;
+                       letter-spacing: 0.1em;'>
+                ⚡ Quick Actions
+            </h3>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔄 Refresh", use_container_width=True):
+                st.rerun()
+        with col2:
+            if st.button("💾 Save All", use_container_width=True):
+                auto_save_test_cases(st.session_state.get('generated_tests', []), 
+                                   'generated', "Manual save triggered")
+        
+        # System Status Dashboard - Start container
+        with st.container():
+            st.markdown("""
+            <div style='background: linear-gradient(135deg, #141824 0%, #262B3B 100%);
+                        border-radius: 10px;
+                        padding: 1rem;
+                        margin: 1rem 0;
+                        border: 1px solid rgba(139, 92, 246, 0.2);'>
+                <h3 style='color: #14B8A6; 
+                           font-size: 0.9rem; 
+                           margin: 0 0 0.75rem 0;
+                           text-transform: uppercase;
+                           letter-spacing: 0.1em;'>
+                    📊 System Status
+                </h3>
+            </div>
+            """, unsafe_allow_html=True)
         
         # Load RAG system
         embedding_model, index, doc_chunks, doc_metadata = load_rag_system()
         
         if index:
-            st.success(f"✅ RAG System Ready")
-            st.info(f"📚 {len(doc_chunks)} document chunks indexed")
+            # Status indicator
+            st.success("🟢 **RAG System Active**")
             
             # Count documents
             existing_docs = len(set(m.get('source') for m in doc_metadata if not m.get('is_uploaded', False)))
             uploaded_docs = len(set(m.get('source') for m in doc_metadata if m.get('is_uploaded', False)))
             
-            st.info(f"📁 {existing_docs} existing documents")
-            st.info(f"📤 {uploaded_docs} uploaded documents")
+            # Display metrics using Streamlit columns
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("📚 Documents", len(doc_chunks), "chunks indexed")
+            with col2:
+                st.metric("📁 Existing", existing_docs, "pre-loaded docs")
+            with col3:
+                st.metric("📤 Uploaded", uploaded_docs, "user documents")
             
-            # Show compliance summary
+            # Compliance summary
             if st.session_state.compliance_reports:
-                st.markdown("### 📋 Compliance Summary")
                 compliant_count = sum(1 for r in st.session_state.compliance_reports.values() if r['is_compliant'])
                 total_count = len(st.session_state.compliance_reports)
-                st.metric("Compliant Documents", f"{compliant_count}/{total_count}")
+                compliance_percentage = (compliant_count / total_count) * 100
+                
+                st.metric("📋 Compliance", f"{compliant_count}/{total_count}", f"{compliance_percentage:.0f}% compliant")
+                st.progress(compliance_percentage / 100)
         else:
-            st.warning("⚠️ No documents loaded")
-            st.info("Upload documents to get started")
+            st.warning("⚠️ **System Initializing...** Please upload documents to activate the RAG system.")
         
-        st.markdown("---")
-        st.metric("Test Cases Generated", st.session_state.test_counter)
+        # Test Statistics
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #141824 0%, #262B3B 100%);
+                    border-radius: 10px;
+                    padding: 1rem;
+                    margin: 1rem 0;
+                    border: 1px solid rgba(139, 92, 246, 0.2);'>
+            <h3 style='color: #F97316; 
+                       font-size: 0.9rem; 
+                       margin: 0 0 0.75rem 0;
+                       text-transform: uppercase;
+                       letter-spacing: 0.1em;'>
+                📈 Session Statistics
+            </h3>
+        </div>
+        """, unsafe_allow_html=True)
         
-        # Auto-save status
-        st.markdown("### 💾 Auto-Save Status")
+        # Test counter
+        test_counter_html = f"""
+        <div style='display: flex; 
+                    justify-content: space-between; 
+                    align-items: center;
+                    padding: 0.5rem;
+                    background: rgba(249, 115, 22, 0.1);
+                    border-radius: 8px;
+                    margin-bottom: 0.75rem;'>
+            <span style='color: #D1D5DB; font-size: 0.85rem;'>Tests Generated</span>
+            <span style='color: #F97316; font-size: 1.5rem; font-weight: 700;'>{st.session_state.test_counter}</span>
+        </div>
+        """
+        st.markdown(test_counter_html, unsafe_allow_html=True)
+        
+        if st.session_state.generated_tests:
+            test_count = len(st.session_state.generated_tests)
+            priority_counts = {}
+            for test in st.session_state.generated_tests:
+                priority = test.get('priority', 'Medium')
+                priority_counts[priority] = priority_counts.get(priority, 0) + 1
+            
+            # Priority breakdown
+            priority_colors = {'High': '#F43F5E', 'Medium': '#EAB308', 'Low': '#10B981'}
+            for priority, count in priority_counts.items():
+                color = priority_colors.get(priority, '#9CA3AF')
+                percentage = (count / test_count) * 100
+                priority_html = f"""
+                <div style='margin-bottom: 0.5rem;'>
+                    <div style='display: flex; justify-content: space-between; margin-bottom: 0.25rem;'>
+                        <span style='color: {color}; font-size: 0.8rem;'>{priority} Priority</span>
+                        <span style='color: {color}; font-size: 0.8rem; font-weight: 600;'>{count}</span>
+                    </div>
+                    <div style='width: 100%; height: 3px; background: #1F2937; border-radius: 2px; overflow: hidden;'>
+                        <div style='width: {percentage}%; 
+                                    height: 100%; 
+                                    background: {color};
+                                    transition: width 0.5s ease;'></div>
+                    </div>
+                </div>
+                """
+                st.markdown(priority_html, unsafe_allow_html=True)
+        
+        # Auto-save status with better visualization
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #141824 0%, #262B3B 100%);
+                    border-radius: 10px;
+                    padding: 1rem;
+                    margin: 1rem 0;
+                    border: 1px solid rgba(139, 92, 246, 0.2);'>
+            <h3 style='color: #10B981; 
+                       font-size: 0.9rem; 
+                       margin: 0 0 0.75rem 0;
+                       text-transform: uppercase;
+                       letter-spacing: 0.1em;'>
+                💾 Auto-Save
+            </h3>
+        </div>
+        """, unsafe_allow_html=True)
+        
         if os.path.exists(f"{TEST_CASES_DIR}/all_tests_latest.json"):
             try:
                 with open(f"{TEST_CASES_DIR}/all_tests_latest.json", 'r') as f:
                     saved_tests = json.load(f)
-                    st.success(f"✅ {len(saved_tests)} tests auto-saved")
                     file_time = datetime.fromtimestamp(os.path.getmtime(f"{TEST_CASES_DIR}/all_tests_latest.json"))
-                    st.caption(f"Last saved: {file_time.strftime('%Y-%m-%d %H:%M:%S')}")
+                    
+                    save_status_html = f"""
+                    <div style='padding: 0.5rem;
+                                background: rgba(16, 185, 129, 0.1);
+                                border-radius: 8px;'>
+                        <div style='display: flex; align-items: center; margin-bottom: 0.5rem;'>
+                            <div style='width: 8px; height: 8px; 
+                                        background: #10B981; 
+                                        border-radius: 50%; 
+                                        margin-right: 0.5rem;
+                                        animation: pulse 2s infinite;'></div>
+                            <span style='color: #10B981; font-weight: 600; font-size: 0.85rem;'>
+                                {len(saved_tests)} tests saved
+                            </span>
+                        </div>
+                        <div style='color: #9CA3AF; font-size: 0.75rem;'>
+                            Last: {file_time.strftime('%H:%M:%S')}
+                        </div>
+                    </div>
+                    """
+                    st.markdown(save_status_html, unsafe_allow_html=True)
             except:
                 st.info("No saved tests found")
         else:
             st.info("No tests saved yet")
         
-        # Export options
+        # Export section
         if st.session_state.generated_tests:
-            st.markdown("### 💾 Export All Tests")
-            if st.button("Export to JSON"):
-                all_tests = {
-                    "generated_on": datetime.now().isoformat(),
-                    "total_tests": len(st.session_state.generated_tests),
-                    "nasscom_compliant": True,
-                    "test_cases": st.session_state.generated_tests
-                }
-                filename = f"{TEST_CASES_DIR}/export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-                with open(filename, 'w') as f:
-                    json.dump(all_tests, f, indent=2, default=str)
-                st.success(f"Saved to {filename}")
+            with st.expander("📤 Export Options", expanded=False):
+                if st.button("🔽 Export to JSON", use_container_width=True):
+                    all_tests = {
+                        "generated_on": datetime.now().isoformat(),
+                        "total_tests": len(st.session_state.generated_tests),
+                        "nasscom_compliant": True,
+                        "test_cases": st.session_state.generated_tests
+                    }
+                    filename = f"{TEST_CASES_DIR}/export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+                    with open(filename, 'w') as f:
+                        json.dump(all_tests, f, indent=2, default=str)
+                    st.success(f"Saved to {filename}")
+        
+        # Settings & Configuration
+        with st.expander("⚙️ Configuration", expanded=False):
+            st.markdown("""
+            <div style='padding: 0.5rem;'>
+                <h4 style='color: #A78BFA; font-size: 0.9rem; margin-bottom: 0.75rem;'>Model Settings</h4>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            temperature = st.slider("Temperature", 0.0, 1.0, 0.7, 0.1, key="temp_slider")
+            max_tests = st.slider("Max Tests", 1, 20, 5, key="max_tests_slider")
+            
+            st.markdown("""
+            <div style='padding: 0.5rem; margin-top: 1rem;'>
+                <h4 style='color: #14B8A6; font-size: 0.9rem; margin-bottom: 0.75rem;'>Export Settings</h4>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            include_timestamps = st.checkbox("Include Timestamps", value=True, key="timestamps_check")
+            include_metadata = st.checkbox("Include Metadata", value=True, key="metadata_check")
+        
+        # Footer with version info
+        st.markdown("""
+        <div style='position: relative;
+                    margin-top: 2rem;
+                    padding: 1rem;
+                    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, transparent 100%);
+                    border-radius: 10px;
+                    text-align: center;
+                    border: 1px solid rgba(139, 92, 246, 0.1);'>
+            <p style='color: #9CA3AF; font-size: 0.75rem; margin: 0;'>
+                Built for NASSCOM Hackathon
+            </p>
+            <p style='color: #6366F1; font-size: 0.7rem; margin: 0.25rem 0 0 0;'>
+                Aurora Theme • Version 9.0
+            </p>
+            <div style='margin-top: 0.75rem; 
+                        display: flex; 
+                        justify-content: center; 
+                        gap: 1rem;'>
+                <span style='color: #8B5CF6; font-size: 0.7rem;'>🚀 AI-Powered</span>
+                <span style='color: #14B8A6; font-size: 0.7rem;'>✨ Healthcare Compliant</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     # Main content area with tabs
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
@@ -2178,11 +3447,10 @@ def main():
             elif not index:
                 st.error("No documents in knowledge base. Please upload documents first.")
             else:
-                # Show enhanced thinking animation if available
-                if UI_ENHANCED:
-                    show_thinking_animation(THINKING_MESSAGES, duration=0.2)
+                # Show AI thinking animation
+                show_ai_thinking(duration=2)
                 
-                with st.spinner("🔍 Retrieving context and generating NASSCOM-compliant test case..."):
+                with st.spinner("🔍 Analyzing your requirement..."):
                     # Retrieve context
                     context_docs = retrieve_context(
                         requirement, 
@@ -2193,6 +3461,10 @@ def main():
                         k=5
                     )
                     
+                # More AI thinking for generation
+                show_ai_thinking(duration=3)
+                
+                with st.spinner("✨ Generating NASSCOM-compliant test case..."):
                     # Generate test case
                     test_case = generate_test_case_with_gemini(requirement, context_docs)
                     
@@ -2213,11 +3485,7 @@ def main():
                     else:
                         st.warning(f"⚠️ Test case generated with limited compliance & auto-saved: {test_case['id']}")
                     
-                    # Enhanced success animation if available
-                    if UI_ENHANCED:
-                        show_success_animation()
-                    else:
-                        st.balloons()
+                    st.balloons()
                     
                     # Show the generated test case
                     display_test_case(test_case, context_docs, "_gen")

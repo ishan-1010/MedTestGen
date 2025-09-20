@@ -19,9 +19,20 @@ pyyaml>=6.0
 pandas>=2.0.0
 openpyxl>=3.1.0
 
+# API Calls
+requests>=2.31.0
+
 # Utilities
 python-dotenv>=1.0.0
 uuid>=1.30
+
+# Database
+pymongo>=4.5.0
+pymongo[srv]>=4.5.0
+
+# Authentication
+bcrypt>=4.0.0
+cryptography>=41.0.0
 
 # Optional (for development)
 # pytest>=7.0.0
