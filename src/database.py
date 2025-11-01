@@ -5,13 +5,13 @@ For AI Test Generator - NASSCOM Healthcare Testing Solution
 
 import os
 from datetime import datetime
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Tuple
 from pymongo import MongoClient, ASCENDING, DESCENDING, TEXT
 from pymongo.errors import ConnectionFailure, DuplicateKeyError, ServerSelectionTimeoutError
-import json
 from bson import ObjectId
 import logging
 from dotenv import load_dotenv
+import bcrypt
 
 # Load environment variables
 load_dotenv()
@@ -804,25 +804,56 @@ class MongoDBManager:
             logger.error(f"Failed to create user: {e}")
             return False, str(e)
     
-    def authenticate_user(self, email: str, password_hash: str) -> Optional[Dict]:
+    def authenticate_user(self, email: str, plain_password: str) -> Optional[Dict]:
         """
         Authenticate a user and return their profile
         
         Args:
             email: User's email
-            password_hash: Hashed password to verify
+            plain_password: Plain text password to verify against stored hash
             
         Returns:
             User document if authenticated, None otherwise
         """
         try:
+            logger.info(f"[AUTH] Attempting authentication for: {email}")
+            
+            # Fetch user by email
             user = self.users.find_one({
                 'email': email.lower(),
-                'password': password_hash,
                 'is_active': True
             })
             
-            if user:
+            if not user:
+                logger.warning(f"[AUTH] User not found - {email}")
+                return None
+            
+            logger.info(f"[AUTH] User found: {user.get('email')}")
+            
+            # Verify password using bcrypt
+            stored_hash = user.get('password', '')
+            if not stored_hash:
+                logger.error(f"[AUTH] No password hash stored for user - {email}")
+                return None
+            
+            logger.info(f"[AUTH] Stored hash length: {len(stored_hash)}, Type: {type(stored_hash)}")
+            logger.info(f"[AUTH] Plain password length: {len(plain_password)}")
+            
+            # Use bcrypt.checkpw to verify the password
+            try:
+                password_matches = bcrypt.checkpw(
+                    plain_password.encode('utf-8'), 
+                    stored_hash.encode('utf-8')
+                )
+                logger.info(f"[AUTH] Password verification result: {password_matches}")
+            except Exception as e:
+                logger.error(f"[AUTH] Password verification error for {email}: {e}")
+                import traceback
+                logger.error(traceback.format_exc())
+                return None
+            
+            if password_matches:
+                logger.info(f"[AUTH] Password matches! Updating last login...")
                 # Update last login
                 self.users.update_one(
                     {'_id': user['_id']},
@@ -836,12 +867,16 @@ class MongoDBManager:
                 
                 # Convert ObjectId to string for JSON serialization
                 user['_id'] = str(user['_id'])
+                logger.info(f"[AUTH] Login successful for {email}")
                 return user
-            
-            return None
+            else:
+                logger.warning(f"[AUTH] Password does NOT match for user - {email}")
+                return None
             
         except Exception as e:
-            logger.error(f"Authentication failed: {e}")
+            logger.error(f"[AUTH] Authentication failed with exception: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
             return None
     
     def get_user_by_email(self, email: str) -> Optional[Dict]:
@@ -954,6 +989,40 @@ class MongoDBManager:
             
         except Exception as e:
             logger.error(f"Failed to update user profile: {e}")
+            return False
+    
+    def update_user_password(self, email: str, new_password_hash: str) -> bool:
+        """
+        Update a user's password (used for password resets or fixing authentication issues)
+        
+        Args:
+            email: User's email address
+            new_password_hash: New bcrypt hashed password
+            
+        Returns:
+            bool: True if password was updated successfully
+        """
+        try:
+            result = self.users.update_one(
+                {'email': email.lower()},
+                {
+                    '$set': {
+                        'password': new_password_hash,
+                        'updated_at': datetime.utcnow()
+                    }
+                }
+            )
+            
+            if result.modified_count > 0:
+                logger.info(f"Password updated successfully for user: {email}")
+                self._audit_log('password_updated', email, {'email': email})
+                return True
+            else:
+                logger.warning(f"No user found or password unchanged for: {email}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Failed to update password for {email}: {e}")
             return False
     
     # ========================================
