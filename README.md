@@ -1,4 +1,5 @@
-# 🧪 AI-Powered Test Case Generator
+# MedTestGen: AI-Powered Test Case Generator 
+https://medtestgen-ishan-genai-hack.streamlit.app/
 
 ## NASSCOM Healthcare/MedTech Testing Solution
 
@@ -11,7 +12,6 @@
   
   <p align="center">
     <strong>Automated Test Case Generation with AI for Healthcare Applications</strong><br>
-    Built for NASSCOM GenAI Exchange Hackathon
   </p>
 
 </div>
@@ -55,16 +55,12 @@ source venv/bin/activate
 
 ### Installation
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/ai-test-generator.git
-cd ai-test-generator
-
 # Install dependencies
 pip install -r requirements.txt
 ```
 
 ### Configuration
-1. Get your Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+1. Get your Gemini API key
 2. Create a `.env` file:
 ```env
 GEMINI_API_KEY=your_api_key_here
@@ -73,7 +69,7 @@ GEMINI_API_KEY=your_api_key_here
 ### Run the Application
 ```bash
 # Run the main app
-streamlit run src/app.py
+streamlit run src/app_v14.py
 
 # The app will open at http://localhost:8501
 ```
@@ -177,40 +173,9 @@ The system adheres to NASSCOM requirements:
 - ✅ Compliance traceability
 - ✅ GDPR compliance ready
 
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-### Development Setup
-```bash
-# Install dev dependencies
-pip install -r requirements-dev.txt
-
-# Run tests
-pytest tests/
-
-# Format code
-black src/
-```
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **NASSCOM** for the problem statement and guidance
-- **Google AI** for Gemini API access
-- **Streamlit** for the amazing framework
-- **Hugging Face** for embedding models
-
-## 📞 Contact & Support
-
-- **Issue Tracker**: [GitHub Issues](https://github.com/yourusername/ai-test-generator/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ai-test-generator/discussions)
 
 ---
 
 <div align="center">
-  <strong>Built with ❤️ for NASSCOM GenAI Exchange Hackathon</strong>
+  <strong>Built with ❤️ for NASSCOM by Ishan (Code Spangers)</strong>
 </div>
