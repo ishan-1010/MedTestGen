@@ -199,7 +199,7 @@ ai-test-generator/
 
 - **Frontend**: Streamlit with custom CSS/HTML
 - **AI/ML**: 
-  - Google Gemini API (gemini-2.0-flash-exp)
+  - Google Gemini API (gemini-2.5-flash)
   - Sentence Transformers (all-MiniLM-L6-v2)
   - FAISS for vector similarity search
 - **Document Processing**: PyPDF2, python-docx, lxml
