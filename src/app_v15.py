@@ -2447,7 +2447,7 @@ FAISS_INDEX_PATH = "data/faiss_indices"  # FAISS vector database for RAG
 
 # Models
 EMBEDDING_MODEL_NAME = 'all-MiniLM-L6-v2'
-GEMINI_MODEL_NAME = 'gemini-2.0-flash-exp'  # Latest model
+GEMINI_MODEL_NAME = 'gemini-2.5-flash'  # Latest model
 
 # NASSCOM Compliance Requirements
 NASSCOM_REQUIREMENTS = {
